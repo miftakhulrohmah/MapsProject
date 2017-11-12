@@ -9,6 +9,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyAyGYry5Zr1oQgnzil00Hq8SMSYlyc5zL" />
+
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
@@ -19,6 +24,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-    </application>
+        <provider
+            android:name="id.sch.smktelkom_mlg.mapsproject.provider.PlaceContentProvider"
+            android:authorities="id.sch.smktelkom_mlg.mapsproject"
+            android:exported="false"/>
+        <receiver android:name="id.sch.smktelkom_mlg.mapsproject.GeofenceBroadcastReceiver" />
 
+    </application>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 </manifest>
