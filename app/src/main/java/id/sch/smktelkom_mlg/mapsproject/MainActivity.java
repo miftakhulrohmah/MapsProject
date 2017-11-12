@@ -41,6 +41,13 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.location.places.ui.PlacePicker;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnStreetViewPanoramaReadyCallback;
+import com.google.android.gms.maps.StreetViewPanorama;
+import com.google.android.gms.maps.StreetViewPanoramaFragment;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.StreetViewPanoramaCamera;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +55,7 @@ import java.util.List;
 import id.sch.smktelkom_mlg.mapsproject.provider.PlaceContract;
 
 
-public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
+public class MainActivity extends AppCompatActivity implements OnStreetViewPanoramaReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
 
     public static final String TAG = MainActivity.class.getSimpleName();
     private static final int PERMISSIONS_REQUEST_FINE_LOCATION = 111;
@@ -64,6 +71,16 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
     private ViewPager mViewPager;
+
+    static final CameraPosition kantor = CameraPosition.builder()
+            .target(new LatLng(-6.182419, 106.830236))
+            .zoom(15)
+            .bearing(0)
+            .tilt(90)
+            .build();
+    GoogleMap googleMap;
+    boolean mapReady = false;
+    LatLng KANTOR = new LatLng(-6.182419, 106.830236);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +124,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         mGeofencing = new Geofencing(this, mClient);
 
+        setContentView(R.layout.fragment_map);
+
+        StreetViewPanoramaFragment svpFragment = (StreetViewPanoramaFragment) getFragmentManager().findFragmentById(R.id.map);
+        svpFragment.getStreetViewPanoramaAsync(this);
     }
 
     @Override
@@ -200,6 +221,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     @Override
     public void onResume() {
         super.onResume();
+        setContentView(R.layout.activity_main);
 
         // Initialize location permissions checkbox
         CheckBox locationPermissions = (CheckBox) findViewById(R.id.location_permission_checkbox);
@@ -248,6 +270,16 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onStreetViewPanoramaReady(StreetViewPanorama streetViewPanorama) {
+        streetViewPanorama.setPosition(KANTOR);
+        streetViewPanorama.setStreetNamesEnabled(false);
+        StreetViewPanoramaCamera camera = StreetViewPanoramaCamera.builder()
+                .bearing(180)
+                .build();
+        streetViewPanorama.animateTo(camera, 1000);
     }
 
     public static class PlaceholderFragment extends Fragment {
